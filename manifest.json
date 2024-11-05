@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Extract Prompts",
+    "version": "1.0",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://chatgpt.com/c/*"],
+            "js": ["content.js"]
+        }
+    ]
+}
