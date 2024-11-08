@@ -1,25 +1,35 @@
 // Function to gather prompts and insert them into a sidebar on the page
 function addSidebarWithPrompts() {
+  let previousUrl = window.location.href;
 
- // Inject a script into the page to listen for pushState or replaceState calls
-  const script = document.createElement('script');
-  script.textContent = `
-    (function() {
-      const originalPushState = history.pushState;
-      history.pushState = function(state, title, url) {
-        originalPushState.apply(this, arguments);
-        window.dispatchEvent(new Event('popstate'));  // Trigger popstate event
-      };
-    })();
-  `;
-    document.documentElement.appendChild(script);
-    document.documentElement.removeChild(script);
-    // Example of URL change detection
-    window.addEventListener('popstate', function() {
-      console.log("Popstate triggered!");
-      loadPrompts();
-    });
+  function attachButtonClickHandler() {
+    // Query the button with aria-label="Send prompt"
+    const button = document.querySelector('button[aria-label="Send prompt"]');
+  
+    // Check if the button exists and attach the click event listener
+    if (button) {
+      button.addEventListener('click', function() {
+        console.log('Button with aria-label "Send prompt" clicked!');
+        loadPrompts();
+      });
+    } else {
+      console.log('Button with aria-label "Send prompt" not found!');
+    }
+  }
 
+  
+  setInterval(() => {
+    if (window.location.href !== previousUrl) {
+      console.log('URL changed:', window.location.href);
+      loadPrompts(); // Trigger your custom function
+      attachButtonClickHandler()
+      setTimeout(() => {
+        loadPrompts();
+        attachButtonClickHandler()
+      }, 5000);
+      previousUrl = window.location.href;  // Update the previous URL
+    }
+  }, 1000);  // Check every second
 
   function addHTML() {
 
@@ -230,6 +240,11 @@ function addSidebarWithPrompts() {
   function loadPrompts() {
     const prompts = [];
     const promptElements = document.querySelectorAll(".whitespace-pre-wrap");
+    if (promptElements.length === 0) {
+      loadPrompts();
+      attachButtonClickHandler()
+    }
+
     promptElements.forEach((el) => {
       prompts.push(el.textContent.trim());
     });
@@ -256,6 +271,7 @@ function addSidebarWithPrompts() {
 
   // Load prompts initially
   loadPrompts();
+  attachButtonClickHandler()
 }
 
 // Use MutationObserver to wait until .whitespace-pre-wrap elements are added to the DOM
