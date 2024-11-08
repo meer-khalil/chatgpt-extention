@@ -1,6 +1,33 @@
 // Function to gather prompts and insert them into a sidebar on the page
 function addSidebarWithPrompts() {
+
+ // Inject a script into the page to listen for pushState or replaceState calls
+  const script = document.createElement('script');
+  script.textContent = `
+    (function() {
+      const originalPushState = history.pushState;
+      history.pushState = function(state, title, url) {
+        originalPushState.apply(this, arguments);
+        window.dispatchEvent(new Event('popstate'));  // Trigger popstate event
+      };
+    })();
+  `;
+    document.documentElement.appendChild(script);
+    document.documentElement.removeChild(script);
+    // Example of URL change detection
+    window.addEventListener('popstate', function() {
+      console.log("Popstate triggered!");
+      loadPrompts();
+    });
+
+
   function addHTML() {
+
+    const fontAwesomeLink = document.createElement("link");
+    fontAwesomeLink.rel = "stylesheet";
+    fontAwesomeLink.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css";
+    document.head.appendChild(fontAwesomeLink);
+    
     // Create icon container
     const iconContainer = document.createElement("div");
     iconContainer.id = "iconContainer";
@@ -17,7 +44,8 @@ function addSidebarWithPrompts() {
     const icon = document.createElement("div");
     icon.id = "icon";
     icon.className = "icon";
-    icon.textContent = "+";
+    icon.innerHTML = '<i class="fas fa-bars"></i>';
+
 
     // Append counter and icon to the icon container
     iconContainer.appendChild(counter);
@@ -27,6 +55,9 @@ function addSidebarWithPrompts() {
     const popup = document.createElement("div");
     popup.id = "popup";
     popup.className = "popup";
+    popup.style.setProperty("--scrollbar-width", "4px");
+    popup.style.setProperty("--scrollbar-color", "#007bff");
+    popup.style.setProperty("--scrollbar-track-color", "#f0f0f0");
 
     // Create item list inside popup
     const itemList = document.createElement("ul");
@@ -47,28 +78,10 @@ function addSidebarWithPrompts() {
 
   // Function to toggle the popup
   function togglePopup() {
-    loadPrompts();
     popup.classList.toggle("show");
-    icon.textContent = popup.classList.contains("show") ? "✖" : "+";
+    icon.innerHTML = popup.classList.contains("show") ? '<i class="fa fa-times" aria-hidden="true"></i>' : '<i class="fas fa-bars"></i>';
+
   }
-  // Function to add items to the list
-//   function addItemsToList(items) {
-//     itemList.innerHTML = ""; // Clear existing items
-//     items.forEach((item, index) => {
-//       const listItem = document.createElement("li");
-//       listItem.textContent = `${index + 1}. ${item}`;
-
-//       promptItem.onclick = () => {
-//             promptElements[index].scrollIntoView({
-//               behavior: "smooth",
-//               block: "center",
-//             });
-//           };
-
-//       itemList.appendChild(listItem);
-//     });
-//     updateCounter(items.length); // Update counter with current item count
-//   }
 
   // Function to update the item counter
   function updateCounter(count) {
@@ -77,71 +90,8 @@ function addSidebarWithPrompts() {
 
   // Create and insert style element for sidebar styles
   const style = document.createElement("style");
-//   style.textContent = `
-//          /* Sidebar styles */
-//          .prompt-sidebar {
-//              position: fixed;
-//              top: 0;
-//              right: 0;
-//              width: 300px;
-//              height: 100%;
-//              background-color: #f9f9f9;
-//              border-left: 1px solid #ddd;
-//              padding: 10px;
-//              overflow-y: auto;
-//              z-index: 1000;
-//              box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-//              font-family: Arial, sans-serif;
-//          }
-  
-//          .prompt-sidebar h3 {
-//              margin-top: 2rem;
-//              font-size: 1.2em;
-//              text-align: center;
-//              color: #333;
-//          }
-  
-//          .prompt-list {
-//              padding: 5px 0;
-//          }
-  
-//          .prompt-item {
-//              padding: 8px;
-//              border-bottom: 1px solid #ccc;
-//              cursor: pointer;
-//              font-size: 0.9em;
-//          }
-  
-//          .prompt-item:hover {
-//              background-color: #e0e0e0;
-//          }
-
-//          .prompt-item.active {
-//              background-color: #007bff;
-//              color: white;
-//          }
-  
-//          .reload-button {
-//              display: block;
-//              margin: 10px auto;
-//              padding: 5px 10px;
-//              font-size: 0.9em;
-//              cursor: pointer;
-//              background-color: #007bff;
-//              color: #fff;
-//              border: none;
-//              border-radius: 3px;
-//              position: fixed;
-//              top: 10px;
-//          }
-  
-//          .reload-button:hover {
-//              background-color: #0056b3;
-//          }
-//      `;
-
-
-    style.textContent = `
+ 
+  style.textContent = `
             .icon-container {
             position: fixed;
             bottom: 20px;
@@ -155,7 +105,7 @@ function addSidebarWithPrompts() {
             /* Center items vertically */
         }
 
-        .icon {
+               .icon {
             width: 50px;
             height: 50px;
             background-color: #007bff;
@@ -164,23 +114,19 @@ function addSidebarWithPrompts() {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            transition: transform 0.3s;
-            /* Smooth transition for scaling */
         }
+        
 
         .counter {
             position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: red;
-            border-radius: 50%;
-            color: white;
-            border: #007bff;
-            margin-right: 6px;
-            /* Space between counter and icon */
-            font-size: 15px;
-            padding: 5px;
+        top: -17px;
+        right: -3px;
+        background-color: red;
+        border-radius: 50%;
+        color: white;
+        line-height: 18px;
+        font-size: 15px;
+        padding: 5px;
         }
 
         .popup {
@@ -237,6 +183,33 @@ function addSidebarWithPrompts() {
             /* Hide any overflow */
             text-overflow: ellipsis;
             /* Show ellipsis (...) for overflowed text */
+            position: relative;
+        }
+         li[title] {
+            position: relative;
+        }
+
+        li[title]:hover::after {
+            content: attr(title); /* Display the title attribute as the tooltip */
+            position: absolute;
+            bottom: 100%; /* Place the tooltip above the item */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.1s ease;
+            z-index: 10;
+        }
+
+        li[title]:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
 
         .item-list li:hover {
@@ -249,16 +222,9 @@ function addSidebarWithPrompts() {
         .item-list li:last-child {
             border-bottom: none;
             /* Remove border from last item */
-        }
-
-        /* Scrollbar Styles */
-        .popup::-webkit-scrollbar {
-    display: none !important; /* For Chrome, Safari, and Edge */
-}
-
-        
+        } 
     `;
-    document.head.appendChild(style);
+  document.head.appendChild(style);
 
   // Collect all elements with the class 'whitespace-pre-wrap'
   function loadPrompts() {
@@ -268,95 +234,25 @@ function addSidebarWithPrompts() {
       prompts.push(el.textContent.trim());
     });
 
-    // const existingList = document.querySelector(".prompt-list");
-    // if (existingList) {
-    //   existingList.remove();
-    // }
-
-    // addItemsToList(prompts)
+  
     itemList.innerHTML = ""; // Clear existing items
     prompts.forEach((item, index) => {
       const listItem = document.createElement("li");
       listItem.textContent = `${index + 1}. ${item}`;
 
+      listItem.setAttribute('title', item);
+
       listItem.onclick = () => {
-            promptElements[index].scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          };
-          
+        promptElements[index].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      };
+
       itemList.appendChild(listItem);
     });
     updateCounter(prompts.length); // Update counter with current item count
-    // Populate sidebar with prompt items
-    // const promptList = document.createElement("div");
-    // promptList.className = "prompt-list";
-    // prompts.forEach((prompt, index) => {
-    //   const promptItem = document.createElement("div");
-    //   promptItem.className = "prompt-item";
-    //   promptItem.textContent = `${index + 1}: ${
-    //     prompt.length > 50 ? prompt.slice(0, 50) + "..." : prompt
-    //   }`;
-    //   // Scroll to the prompt in the page when clicked
-    //   promptItem.onclick = () => {
-    //     promptElements[index].scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "center",
-    //     });
-    //   };
-    //   promptList.appendChild(promptItem);
-    // });
-    // sidebar.appendChild(promptList);
-
-    // // Start observing the prompt elements
-    // observePrompts(promptElements);
   }
-
-  function observePrompts(promptElements) {
-    const options = {
-      root: null, // Use the viewport as the root
-      threshold: 0.5, // Trigger when 50% of the element is visible
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const index = Array.from(promptElements).indexOf(entry.target);
-        const promptItems = document.querySelectorAll(".prompt-item");
-
-        if (entry.isIntersecting) {
-          promptItems.forEach((item) => item.classList.remove("active")); // Remove active class from all items
-          promptItems[index].classList.add("active"); // Highlight the currently active item
-        }
-      });
-    }, options);
-
-    promptElements.forEach((element) => {
-      observer.observe(element); // Observe each prompt element
-    });
-  }
-
-//   let sidebar = document.getElementById("prompt-sidebar");
-//   if (!sidebar) {
-//     // Create the sidebar container
-//     sidebar = document.createElement("div");
-//     sidebar.id = "prompt-sidebar";
-//     sidebar.classList.add("prompt-sidebar");
-
-//     // Create the header for the sidebar
-//     const header = document.createElement("h3");
-//     header.textContent = "Extracted Prompts";
-//     sidebar.appendChild(header);
-
-//     // Create and add the reload button
-//     const reloadButton = document.createElement("button");
-//     reloadButton.className = "reload-button";
-//     reloadButton.textContent = "Reload";
-//     reloadButton.onclick = loadPrompts;
-//     sidebar.appendChild(reloadButton);
-
-//     document.body.appendChild(sidebar);
-//   }
 
   // Load prompts initially
   loadPrompts();
