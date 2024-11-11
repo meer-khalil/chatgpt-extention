@@ -29,6 +29,7 @@ function addSidebarWithPrompts() {
       }, 5000);
       previousUrl = window.location.href;  // Update the previous URL
     }
+    loadPrompts();
   }, 1000);  // Check every second
 
   function addHTML() {
@@ -39,27 +40,27 @@ function addSidebarWithPrompts() {
     document.head.appendChild(fontAwesomeLink);
     
     // Create icon container
-    const iconContainer = document.createElement("div");
-    iconContainer.id = "iconContainer";
-    iconContainer.className = "icon-container";
-    iconContainer.onclick = togglePopup;
+    // const iconContainer = document.createElement("div");
+    // iconContainer.id = "iconContainer";
+    // iconContainer.className = "icon-container";
+    // iconContainer.onclick = togglePopup;
 
-    // Create counter
-    const counter = document.createElement("div");
-    counter.id = "counter";
-    counter.className = "counter";
-    counter.textContent = "0"; // Initial count value
+    // // Create counter
+    // const counter = document.createElement("div");
+    // counter.id = "counter";
+    // counter.className = "counter";
+    // counter.textContent = "0"; // Initial count value
 
-    // Create icon
-    const icon = document.createElement("div");
-    icon.id = "icon";
-    icon.className = "icon";
-    icon.innerHTML = '<i class="fas fa-bars"></i>';
+    // // Create icon
+    // const icon = document.createElement("div");
+    // icon.id = "icon";
+    // icon.className = "icon";
+    // icon.innerHTML = '<i class="fas fa-bars"></i>';
 
 
-    // Append counter and icon to the icon container
-    iconContainer.appendChild(counter);
-    iconContainer.appendChild(icon);
+    // // Append counter and icon to the icon container
+    // iconContainer.appendChild(counter);
+    // iconContainer.appendChild(icon);
 
     // Create popup container
     const popup = document.createElement("div");
@@ -76,27 +77,27 @@ function addSidebarWithPrompts() {
     popup.appendChild(itemList);
 
     // Append iconContainer and popup to body
-    document.body.appendChild(iconContainer);
+    // document.body.appendChild(iconContainer);
     document.body.appendChild(popup);
   }
   addHTML();
 
   const itemList = document.getElementById("itemList");
   const popup = document.getElementById("popup");
-  const icon = document.getElementById("icon");
-  const counter = document.getElementById("counter");
+  // const icon = document.getElementById("icon");
+  // const counter = document.getElementById("counter");
 
   // Function to toggle the popup
   function togglePopup() {
     popup.classList.toggle("show");
-    icon.innerHTML = popup.classList.contains("show") ? '<i class="fa fa-times" aria-hidden="true"></i>' : '<i class="fas fa-bars"></i>';
-
+    // icon.innerHTML = popup.classList.contains("show") ? '<i class="fa fa-times" aria-hidden="true"></i>' : '<i class="fas fa-bars"></i>';
+    loadPrompts();
   }
 
   // Function to update the item counter
-  function updateCounter(count) {
-    counter.textContent = count; // Set counter text
-  }
+  // function updateCounter(count) {
+  //   counter.textContent = count; // Set counter text
+  // }
 
   // Create and insert style element for sidebar styles
   const style = document.createElement("style");
@@ -140,14 +141,14 @@ function addSidebarWithPrompts() {
         }
 
         .popup {
-            display: none;
+            display: block;
             /* Initially hidden */
             position: absolute;
             bottom: 120px;
             /* Position above the icon */
-            right: 50px;
+            right: 25px;
             /* Position on the right */
-            width: 250px;
+            width: 275px;
             /* Set desired width */
             max-height: 80vh;
             background-color: #fff;
@@ -157,11 +158,11 @@ function addSidebarWithPrompts() {
             padding: 15px;
             z-index: 1001;
             /* Ensure it's above other elements */
-            opacity: 0;
+            opacity: 1;
             /* Start with zero opacity for animation */
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
             /* Smooth transition */
-            transform: translateY(10px);
+            // transform: translateY(10px);
             /* Start slightly lower for animation */
             overflow-y: auto;
             /* Allow scrolling if content exceeds height */
