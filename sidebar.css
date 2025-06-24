@@ -1,0 +1,37 @@
+/* Sidebar styles */
+.prompt-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #f9f9f9;
+    border-left: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.prompt-sidebar h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    text-align: center;
+    color: #333;
+}
+
+.prompt-list {
+    padding: 5px 0;
+}
+
+.prompt-item {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.prompt-item:hover {
+    background-color: #e0e0e0;
+}

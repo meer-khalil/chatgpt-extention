@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "Extract Prompts",
+    "version": "1.0",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://chatgpt.com/c/*"],
+            "js": ["content.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "icons/chat-dots-svgrepo-com.svg",
+                "icons/cross-small-svgrepo-com.svg",
+                "icons/help-circle-svgrepo-com.svg"
+            ],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}
